@@ -1,0 +1,301 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Slim Mom API",
+      "version": "1.0.0",
+      "description": "Documentation for Slim Mom API",
+      "servers":{
+        "url": "localhost:7000"
+      }
+        
+    },
+    "paths": {
+      "/auth/signup": {
+        "post": {
+          "summary": "Sign up a new user",
+          "tags": ["Auth"],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": { "type": "string" },
+                    "email": { "type": "string", "format": "email" },
+                    "password": { "type": "string" }
+                  },
+                  "required": ["email", "password"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": { "description": "User signed up successfully" },
+            "400": { "description": "Validation error" },
+            "409": { "description": "Email in use" },
+            "500": { "description": "Server error" }
+          }
+        }
+      },
+      "/auth/login": {
+        "post": {
+          "summary": "Log in a user",
+          "tags": ["Auth"],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "email": { "type": "string", "format": "email" },
+                    "password": { "type": "string" }
+                  },
+                  "required": ["email", "password"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": { "description": "User logged in successfully" },
+            "400": { "description": "Validation error" },
+            "401": { "description": "Authentication error" },
+            "500": { "description": "Server error" }
+          }
+        }
+      },
+      "/auth/logout": {
+        "get": {
+          "summary": "Log out a user",
+          "tags": ["Auth"],
+          "responses": {
+            "204": { "description": "User logged out successfully" },
+            "401": { "description": "Not authorized" },
+            "500": { "description": "Server error" }
+          }
+        }
+      },
+      "/api/diary": {
+        "post": {
+          "summary": "Track calories",
+          "tags": ["Diary"],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "height": { "type": "number" },
+                    "age": { "type": "number" },
+                    "currentWeight": { "type": "number" },
+                    "desiredWeight": { "type": "number" },
+                    "bloodType": { "type": "number" }
+                  },
+                  "required": ["height", "age", "currentWeight", "desiredWeight", "bloodType"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": { "description": "Calories tracked successfully" },
+            "400": { "description": "Validation error" },
+            "500": { "description": "Server error" }
+          }
+        }
+      },
+      "/api/register-diary": {
+        "post": {
+          "summary": "Register diary entry",
+          "tags": ["Diary"],
+          "security": [{ "bearerAuth": [] }],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "height": { "type": "number" },
+                    "age": { "type": "number" },
+                    "currentWeight": { "type": "number" },
+                    "desiredWeight": { "type": "number" },
+                    "bloodType": { "type": "number" }
+                  },
+                  "required": ["height", "age", "currentWeight", "desiredWeight", "bloodType"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": { "description": "Diary entry registered successfully" },
+            "400": { "description": "Validation error" },
+            "401": { "description": "Not authorized" },
+            "409": { "description": "User already exists" },
+            "500": { "description": "Server error" }
+          }
+        }
+      },
+
+      "/api/search-products": {
+        "get": {
+          "summary": "Search products",
+          "tags": ["Products"],
+          "security": [{ "bearerAuth": [] }],
+          "parameters": [
+            {
+              "name": "q",
+              "in": "query",
+              "required": true,
+              "schema": { "type": "string" },
+              "description": "Query string for searching products"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "List of products matching the query",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "title": { "type": "string" },
+                        "categories": { "type": "array", "items": { "type": "string" } },
+                        "weight": { "type": "number" },
+                        "calories": { "type": "number" }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": { "description": "Query parameter q is required" },
+            "401": { "description": "Not authorized" },
+            "500": { "description": "Server error" }
+          }
+        }
+      },
+
+      "/api/add-product": {
+        "post": {
+          "summary": "Add a product",
+          "tags": ["Products"],
+          "security": [{ "bearerAuth": [] }],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "product": {
+                      "type": "object",
+                      "properties": {
+                        "date": { "type": "string" },
+                        "title": { "type": "string" },
+                        "calories": { "type": "number" },
+                        "weight": { "type": "number" }
+                      },
+                      "required": ["date", "title", "calories", "weight"]
+                    }
+                  },
+                  "required": ["product"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": { "description": "Product added successfully" },
+            "400": { "description": "Incomplete data provided" },
+            "401": { "description": "Not authorized" },
+            "500": { "description": "Server error" }
+          }
+        }
+      },
+      "/api/remove-product": {
+        "post": {
+          "summary": "Remove a product",
+          "tags": ["Products"],
+          "security": [{ "bearerAuth": [] }],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "date": { "type": "string" },
+                    "title": { "type": "string" }
+                  },
+                  "required": ["date", "title"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": { "description": "Product removed successfully" },
+            "401": { "description": "Not authorized" },
+            "500": { "description": "Server error" }
+          }
+        }
+      },
+      "/api/diary-day-info": {
+        "get": {
+          "summary": "Get info for a specific day",
+          "tags": ["Diary"],
+          "security": [{ "bearerAuth": [] }],
+          "parameters": [
+            {
+              "name": "date",
+              "in": "query",
+              "required": true,
+              "schema": { "type": "string" },
+              "description": "Date for which to get info"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Information for the specified date",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": { "type": "string" },
+                      "products": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "date": { "type": "string" },
+                            "title": { "type": "string" },
+                            "calories": { "type": "number" },
+                            "weight": { "type": "number" }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401": { "description": "Not authorized" },
+            "404": { "description": "No registrations on the requested date" },
+            "500": { "description": "Server error" }
+          }
+        }
+      }
+    },
+    "components": {
+      "securitySchemes": {
+        "bearerAuth": {
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT"
+        }
+      }
+    }
+  }
