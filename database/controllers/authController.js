@@ -1,4 +1,3 @@
-// import bcrypt from 'bcrypt';
 
 import  Joi from 'joi';
 import User from '../models/User.js'
@@ -107,6 +106,79 @@ export const login = async (req, res, next) =>{
     .status(500)
     .json({ message: `${err}`});
   }
+};
+
+
+
+
+export const userinfo = async (req, res, next) => {
+
+
+  try{
+    const header = req.get('authorization');
+    console.log("Header:", header)
+    if(!header) {
+      return res
+      .status(401)
+      .json({ message: 'Not authorized'});
+    }
+    const token = header.split(" ")[1];
+    console.log("Token:", token);
+    
+    const payload =  ValidateJWT(token);
+
+    const id = payload.id;
+    console.log("Id:", id);
+    const user = await User.findById(id);
+    console.log("User:", user)
+
+    // user.token = null;
+    // await user.save();
+
+    if (!user) {
+          return res.status(404).json({ message: 'User not found' });
+        }
+    return res.status(200).json({ name: user.name });
+
+
+  }
+  catch(err){
+    return res
+    .status(500)
+    .json({ message: `${err}`});
+  }
+
+
+
+    // try {
+    //   const header = req.get('authorization');
+    //   console.log("Header:", header);
+      
+    //   if (!header) {
+    //     return res.status(401).json({ message: 'Not authorized' });
+    //   }
+  
+    //   const token = header.split(" ")[1];
+    //   console.log("Token:", token);
+  
+    //   const payload = ValidateJWT(token);
+  
+    //   const id = payload.id;
+    //   console.log("Id:", id);
+  
+    //   const user = await User.findById(id);
+    //   console.log("User:", user);
+  
+    //   if (!user) {
+    //     return res.status(404).json({ message: 'User not found' });
+    //   }
+  
+    //   return res.status(200).json({ name: user.name });
+  
+    // } catch (err) {
+    //   console.error("Error:", err);
+    //   return res.status(500).json({ message: `${err}` });
+    // }
 };
 
 export const logout = async (req, res, next) =>{

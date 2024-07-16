@@ -4,6 +4,7 @@ import {
     login,
     logout, 
     singup, 
+    userinfo, 
     validateAuth
 } from '../controllers/authController.js';
 
@@ -14,6 +15,9 @@ router.post('/signup', singup);
 
 // POST /auth/login
 router.post('/login', login);
+
+// get /auth/userinfo
+router.get('/userinfo', validateAuth, userinfo);
 
 //GET /auth/logout
 router.get('/logout', validateAuth, logout);

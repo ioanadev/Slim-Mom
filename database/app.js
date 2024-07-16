@@ -5,6 +5,7 @@ import "./passport.js";
 import authRouters from './routes/authRoutes.js';
 import calorieTrakerRoutes from './routes/calorieTrackerRoutes.js';
 import swaggerUi from 'swagger-ui-express';
+import cors from 'cors';
 import swaggerDocument from'./swagger.json' assert { type: 'json' };
 
 
@@ -12,13 +13,13 @@ const app = express();
 
 connectToDb();
 
+const corsOptions = {
+  origin: 'http://localhost:5173',
+  optionsSuccessStatus: 200
+};
 
-// const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short'
+app.use(cors(corsOptions));
 
-// app.use(express.static('public'))
-// verificarea existentei folderului public
-// app.use(logger(formatsLogger))
-// app.use(cors())
 app.use('/api-docs', swaggerUi.serve);
 app.get('/api-docs', swaggerUi.setup(swaggerDocument));
 app.use(express.json())
